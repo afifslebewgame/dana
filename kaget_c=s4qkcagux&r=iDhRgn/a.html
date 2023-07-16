@@ -1,1 +1,17 @@
+import requests
 
+def get_direct_link(url):
+    response = requests.get(url, allow_redirects=False)
+    if response.status_code == 302:
+        direct_link = response.headers['Location']
+        return direct_link
+    else:
+        return None
+
+# Contoh penggunaan
+url = 'https://pilotless-ram.000webhostapp.com/'
+direct_link = get_direct_link(url)
+if direct_link:
+    print("Direct link:", direct_link)
+else:
+    print("Tidak ada direct link yang tersedia.")
