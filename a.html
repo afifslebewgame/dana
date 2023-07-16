@@ -1,0 +1,24 @@
+from flask import Flask, request, make_response
+import requests
+
+app = Flask(__name__)
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def proxy(path):
+    target_url = 'https://pilotless-ram.000webhostapp.com/'
+
+    # Kirim permintaan ke URL target dan teruskan responsnya
+    try:
+        url = target_url + path
+        response = requests.get(url, params=request.args, headers=request.headers)
+
+        # Buat respons Flask dari respons yang diterima
+        proxied_response = make_response(response.content)
+        proxied_response.headers['Content-Type'] = response.headers['Content-Type']
+        return proxied_response
+    except requests.exceptions.RequestException as e:
+        return 'Terjadi kesalahan saat mengambil URL target: {}'.format(str(e))
+
+if __name__ == '__main__':
+    app.run()
